@@ -6,7 +6,7 @@
 
 #define ALTURA 10
 #define LARGURA 10
-#define MONSTRO_DELAY 300 // Tempo de espera entre os movimentos do monstro em milissegundos
+#define MONSTRO_DELAY 100 // Tempo de espera entre os movimentos do monstro em milissegundos
 
 void imprimirMapa(char mapa[][LARGURA], int jogadorX, int jogadorY, int monstroX, int monstroY) {
     system("cls"); // Limpar tela (Windows)
@@ -16,7 +16,7 @@ void imprimirMapa(char mapa[][LARGURA], int jogadorX, int jogadorY, int monstroX
             if (i == jogadorY && j == jogadorX) {
                 printf("&");
             } else if (i == monstroY && j == monstroX) {
-                printf("M");
+                printf("X"); // Caractere do monstro alterado para 'X'
             } else {
                 printf("%c", mapa[i][j]);
             }
@@ -52,21 +52,47 @@ void moverJogador(char direcao, int *jogadorX, int *jogadorY, char mapa[][LARGUR
     }
 }
 
+void moverMonstroAleatorio(int *monstroX, int *monstroY, char mapa[][LARGURA]) {
+    // Gera uma dire√ß√£o de movimento aleat√≥ria (cima, baixo, esquerda, direita)
+    int direcao = rand() % 4;
+    int novoX = *monstroX, novoY = *monstroY;
+
+    switch (direcao) {
+        case 0: // Cima
+            novoY = *monstroY - 1;
+            break;
+        case 1: // Baixo
+            novoY = *monstroY + 1;
+            break;
+        case 2: // Esquerda
+            novoX = *monstroX - 1;
+            break;
+        case 3: // Direita
+            novoX = *monstroX + 1;
+            break;
+    }
+
+    if (podeMover(mapa, novoX, novoY)) {
+        *monstroX = novoX;
+        *monstroY = novoY;
+    }
+}
+
 int main() {
     char mapa[ALTURA][LARGURA] = {
         "**********",
-        "*        *",
         "*    *   *",
         "*    *   *",
         "*    *   *",
         "*    *   *",
         "*    *   *",
         "*    *   *",
-        "*        *",
+        "*    *   *",
+        "*    *   *",
         "**********"
     };
-    int jogadorX = 1, jogadorY = 1; // PosiÁ„o inicial do jogador
-    int monstroX = 8, monstroY = 8; // PosiÁ„o inicial do monstro
+    int jogadorX = 1, jogadorY = 1; // Posi√ß√£o inicial do jogador
+    int monstroX = 8, monstroY = 8; // Posi√ß√£o inicial do monstro
     char movimento;
     bool jogadorMoveu = false;
 
@@ -83,18 +109,7 @@ int main() {
 
         // Movimentar o monstro apenas se o jogador se moveu
         if (jogadorMoveu) {
-            // Movimentar o monstro em direÁ„o ao jogador
-            if (jogadorX < monstroX && podeMover(mapa, monstroX - 1, monstroY)) {
-                monstroX--;
-            } else if (jogadorX > monstroX && podeMover(mapa, monstroX + 1, monstroY)) {
-                monstroX++;
-            }
-            if (jogadorY < monstroY && podeMover(mapa, monstroX, monstroY - 1)) {
-                monstroY--;
-            } else if (jogadorY > monstroY && podeMover(mapa, monstroX, monstroY + 1)) {
-                monstroY++;
-            }
-
+            moverMonstroAleatorio(&monstroX, &monstroY, mapa);
             jogadorMoveu = false; // Resetar a flag de movimento do jogador
         }
 
@@ -104,10 +119,9 @@ int main() {
             break; // Encerrar o jogo
         }
 
-        // Aguardar um pouco antes de permitir o prÛximo ciclo do loop
-        Sleep(MONSTRO_DELAY); // Ajuste o tempo conforme necess·rio para tornar o monstro mais lento
+        // Aguardar um pouco antes de permitir o pr√≥ximo ciclo do loop
+        Sleep(MONSTRO_DELAY); // Ajuste o tempo conforme necess√°rio para tornar o monstro mais lento
     }
 
     return 0;
 }
-
