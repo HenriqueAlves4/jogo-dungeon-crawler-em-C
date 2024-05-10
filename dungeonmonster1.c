@@ -97,14 +97,17 @@ int main() {
     bool jogadorMoveu = false;
 
     // Loop principal do jogo
-    while (true) {
-        imprimirMapa(mapa, jogadorX, jogadorY, monstroX, monstroY);
+    imprimirMapa(mapa, jogadorX, jogadorY, monstroX, monstroY);
 
+    while (true) {
         // Verificar se o jogador pressionou uma tecla para se mover
+
         if (kbhit()) {
             movimento = getch();
             moverJogador(movimento, &jogadorX, &jogadorY, mapa);
             jogadorMoveu = true;
+            imprimirMapa(mapa, jogadorX, jogadorY, monstroX, monstroY);
+
         }
 
         // Movimentar o monstro apenas se o jogador se moveu
