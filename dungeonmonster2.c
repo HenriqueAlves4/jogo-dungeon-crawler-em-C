@@ -4,9 +4,9 @@
 #include <conio.h> // Para getch e kbhit
 #include <windows.h> // Para Sleep
 
-#define ALTURA 10
-#define LARGURA 10
-#define MONSTRO_DELAY 300 // Tempo de espera entre os movimentos do monstro em milissegundos
+#define ALTURA 20
+#define LARGURA 20
+#define MONSTRO_DELAY 2000 // Tempo de espera entre os movimentos do monstro em milissegundos
 
 void imprimirMapa(char mapa[][LARGURA], int jogadorX, int jogadorY, int monstroX, int monstroY) {
     system("cls"); // Limpar tela (Windows)
@@ -53,37 +53,65 @@ void moverJogador(char direcao, int *jogadorX, int *jogadorY, char mapa[][LARGUR
 }
 
 void moverMonstro(char mapa[][LARGURA], int *monstroX, int *monstroY, int jogadorX, int jogadorY, int delay) {
-    // Lógica de perseguição mais lenta
-    if (*monstroX < jogadorX && podeMover(mapa, *monstroX + 1, *monstroY)) {
-        *monstroX += 1;
-    } else if (*monstroX > jogadorX && podeMover(mapa, *monstroX - 1, *monstroY)) {
-        *monstroX -= 1;
+    // LÃ³gica de movimento mais lenta
+    // Calcular a diferenÃ§a entre as coordenadas do monstro e do jogador
+    int difX = jogadorX - *monstroX;
+    int difY = jogadorY - *monstroY;
+
+    // Movimento do monstro na horizontal
+    if (abs(difX) >= abs(difY)) {
+        // Tentar mover na direÃ§Ã£o X sem colidir com paredes
+        if (difX > 0 && podeMover(mapa, *monstroX + 1, *monstroY)) {
+            *monstroX += 1;
+        } else if (difX < 0 && podeMover(mapa, *monstroX - 1, *monstroY)) {
+            *monstroX -= 1;
+        }
+        // Se houver uma parede na frente, tentar desviar na direÃ§Ã£o Y
+        else {
+            if (difY > 0 && podeMover(mapa, *monstroX, *monstroY + 1)) {
+                *monstroY += 1;
+            } else if (difY < 0 && podeMover(mapa, *monstroX, *monstroY - 1)) {
+                *monstroY -= 1;
+            }
+        }
     }
-    if (*monstroY < jogadorY && podeMover(mapa, *monstroX, *monstroY + 1)) {
-        *monstroY += 1;
-    } else if (*monstroY > jogadorY && podeMover(mapa, *monstroX, *monstroY - 1)) {
-        *monstroY -= 1;
+    // Movimento do monstro na vertical
+    else {
+        // Tentar mover na direÃ§Ã£o Y sem colidir com paredes
+        if (difY > 0 && podeMover(mapa, *monstroX, *monstroY + 1)) {
+            *monstroY += 1;
+        } else if (difY < 0 && podeMover(mapa, *monstroX, *monstroY - 1)) {
+            *monstroY -= 1;
+        }
+        // Se houver uma parede na frente, tentar desviar na direÃ§Ã£o X
+        else {
+            if (difX > 0 && podeMover(mapa, *monstroX + 1, *monstroY)) {
+                *monstroX += 1;
+            } else if (difX < 0 && podeMover(mapa, *monstroX - 1, *monstroY)) {
+                *monstroX -= 1;
+            }
+        }
     }
 
-    // Aguardar um pouco antes de permitir o próximo movimento
+    // Aguardar um pouco antes de permitir o prÃ³ximo movimento
     Sleep(delay);
 }
 
 int main() {
     char mapa[ALTURA][LARGURA] = {
-        "**********",
-        "*   *  * *",
-        "*    * * *",
-        "*  *   * *",
-        "*    *   *",
-        "*  *     *",
-        "*    *   *",
-        "*        *",
-        "* *  *   *",
-        "**********"
+        "********************",
+        "*    *    *        *",
+        "*    *    *        *",
+        "*    * ** *        *",
+        "*                  *",
+        "*                  *",
+        "*    ******        *",
+        "*         *        *",
+        "*    *    *        *",
+        "********************"
     };
-    int jogadorX = 1, jogadorY = 1; // Posição inicial do jogador
-    int monstroX = 8, monstroY = 8; // Posição inicial do segundo monstro
+    int jogadorX = 1, jogadorY = 1; // PosiÃ§Ã£o inicial do jogador
+    int monstroX = 8, monstroY = 8; // PosiÃ§Ã£o inicial do monstro
     char movimento;
 
     // Loop principal do jogo
@@ -93,7 +121,7 @@ int main() {
         if (kbhit()) {
             movimento = getch();
             moverJogador(movimento, &jogadorX, &jogadorY, mapa);
-                    imprimirMapa(mapa, jogadorX, jogadorY, monstroX, monstroY);
+            imprimirMapa(mapa, jogadorX, jogadorY, monstroX, monstroY);
         }
 
         // Movimentar monstro
@@ -108,4 +136,3 @@ int main() {
 
     return 0;
 }
-
