@@ -6,7 +6,7 @@
 
 #define ALTURA 20
 #define LARGURA 20
-#define MONSTRO_DELAY 2000 // Tempo de espera entre os movimentos do monstro em milissegundos
+#define MONSTRO_DELAY 950 // Tempo de espera entre os movimentos do monstro em milissegundos
 
 void imprimirMapa(char mapa[][LARGURA], int jogadorX, int jogadorY, int monstroX, int monstroY) {
     system("cls"); // Limpar tela (Windows)
@@ -129,8 +129,12 @@ int main() {
         
         // Verificar se o jogador foi pego pelo monstro
         if (jogadorX == monstroX && jogadorY == monstroY) {
-            printf("\nVoce foi pego pelo monstro!\n");
-            break; // Encerrar o jogo
+            printf("\nVoce foi pego pelo monstro! Pressione qualquer tecla para reiniciar...\n");
+            getch(); // Aguardar entrada do jogador
+            jogadorX = 1;
+            jogadorY = 1;
+            monstroX = 8;
+            monstroY = 8;
         }
     }
 
