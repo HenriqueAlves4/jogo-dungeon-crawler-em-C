@@ -81,7 +81,7 @@ void moverMonstroAleatorio(int *monstroX, int *monstroY, char mapa[][LARGURA]) {
 int main() {
     char mapa[ALTURA][LARGURA] = {
         "**********",
-        "*    *   *",
+        "*        *",
         "*    *   *",
         "*    *   *",
         "*    *   *",
@@ -101,13 +101,11 @@ int main() {
 
     while (true) {
         // Verificar se o jogador pressionou uma tecla para se mover
-
         if (kbhit()) {
             movimento = getch();
             moverJogador(movimento, &jogadorX, &jogadorY, mapa);
             jogadorMoveu = true;
             imprimirMapa(mapa, jogadorX, jogadorY, monstroX, monstroY);
-
         }
 
         // Movimentar o monstro apenas se o jogador se moveu
@@ -118,8 +116,13 @@ int main() {
 
         // Verificar se o jogador foi pego pelo monstro
         if (jogadorX == monstroX && jogadorY == monstroY) {
-            printf("\nVoce foi pego pelo monstro!\n");
-            break; // Encerrar o jogo
+            printf("\nVoce foi pego pelo monstro! Pressione qualquer tecla para reiniciar...\n");
+            getch(); // Aguardar entrada do jogador
+            jogadorX = 1;
+            jogadorY = 1;
+            monstroX = 8;
+            monstroY = 8;
+            imprimirMapa(mapa, jogadorX, jogadorY, monstroX, monstroY);
         }
 
         // Aguardar um pouco antes de permitir o próximo ciclo do loop
